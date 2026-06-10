@@ -156,3 +156,18 @@ describe('Dashboard', () => {
     expect(screen.getByText(/below the global average/i)).toBeInTheDocument();
   });
 });
+
+// ─── ErrorBoundary ────────────────────────────────────────────────────────────
+
+import ErrorBoundary from '../src/components/ErrorBoundary.jsx';
+
+describe('ErrorBoundary', () => {
+  it('renders children when there is no error', () => {
+    render(
+      <ErrorBoundary>
+        <p>Safe content</p>
+      </ErrorBoundary>
+    );
+    expect(screen.getByText('Safe content')).toBeInTheDocument();
+  });
+});

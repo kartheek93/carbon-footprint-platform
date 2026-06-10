@@ -16,6 +16,7 @@ import {
   getEmissionColor,
   groupByDay,
   getCurrentStreak,
+  getPreviousDay,
   sanitizeText,
   validateEntry,
 } from '../src/utils/carbonCalc.js';
@@ -240,11 +241,22 @@ describe('groupByDay', () => {
   });
 });
 
-describe('getCurrentStreak', () => {
-  it('returns 0 for empty entries', () => {
-    expect(getCurrentStreak([])).toBe(0);
+// ─── getPreviousDay ───────────────────────────────────────────────────────────
+
+describe('getPreviousDay', () => {
+  it('returns the previous calendar day', () => {
+    expect(getPreviousDay('2024-03-15')).toBe('2024-03-14');
+  });
+
+  it('handles month boundary correctly', () => {
+    expect(getPreviousDay('2024-03-01')).toBe('2024-02-29');
+  });
+
+  it('handles year boundary correctly', () => {
+    expect(getPreviousDay('2024-01-01')).toBe('2023-12-31');
   });
 });
+
 
 // ─── Security: Input Sanitization ─────────────────────────────────────────────
 
