@@ -5,10 +5,12 @@
 import PropTypes from 'prop-types';
 
 export default function BadgeToast({ badge }) {
-  if (!badge) return null;
+  if (!badge) {return null;}
   return (
     <div className="badge-toast" role="alert" aria-live="assertive" aria-atomic="true">
-      <span className="badge-toast-icon" aria-hidden="true">{badge.icon}</span>
+      <span className="badge-toast-icon" aria-hidden="true">
+        {badge.icon}
+      </span>
       <div>
         <div className="badge-toast-title">Badge earned!</div>
         <div className="badge-toast-label">{badge.label}</div>

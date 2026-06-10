@@ -41,7 +41,9 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
   const envKey = import.meta.env.VITE_MISTRAL_API_KEY || '';
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
   const [showKey, setShowKey] = useState(false);
-  const [keySubmitted, setKeySubmitted] = useState(() => !!(localStorage.getItem('gemini_api_key') || envKey));
+  const [keySubmitted, setKeySubmitted] = useState(
+    () => !!(localStorage.getItem('gemini_api_key') || envKey)
+  );
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -52,7 +54,7 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
   function handleSaveKey(e) {
     e.preventDefault();
     const trimmed = apiKey.trim();
-    if (!trimmed) return;
+    if (!trimmed) {return;}
     localStorage.setItem('gemini_api_key', trimmed);
     setKeySubmitted(true);
     setApiError(null);
@@ -60,7 +62,7 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
 
   async function sendMessage(text) {
     const trimmed = text.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || loading) {return;}
 
     setInput('');
     setApiError(null);
@@ -74,8 +76,9 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
       const reply = await sendMessageToAssistant(trimmed, history, userContext, storedKey);
       onAddMessage('assistant', reply);
     } catch (err) {
-      const isQuota = err.message?.toLowerCase().includes('quota') ||
-                      err.message?.toLowerCase().includes('limit');
+      const isQuota =
+        err.message?.toLowerCase().includes('quota') ||
+        err.message?.toLowerCase().includes('limit');
       setApiError(
         isQuota
           ? '⏳ Rate limit reached on all models. Please wait 1 minute and try again, or check your Google AI quota at ai.google.dev/rate-limit'
@@ -115,7 +118,9 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
         <div className="chat-header-info">
           <Bot size={20} aria-hidden="true" />
           <div>
-            <div className="chat-title">EcoTrace AI <span className="powered-by">· Gemini</span></div>
+            <div className="chat-title">
+              EcoTrace AI <span className="powered-by">· Gemini</span>
+            </div>
             {contextSummary && <div className="chat-subtitle">{contextSummary}</div>}
           </div>
         </div>
@@ -146,11 +151,17 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
         <form className="apikey-form" onSubmit={handleSaveKey} aria-label="Enter Gemini API key">
           <div className="apikey-info">
             <Key size={18} aria-hidden="true" />
-            <span>Enter your <strong>Gemini API key</strong> to activate the AI chat</span>
+            <span>
+              Enter your <strong>Gemini API key</strong> to activate the AI chat
+            </span>
           </div>
           <p className="apikey-hint">
             Get a free key at{' '}
-            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               aistudio.google.com
             </a>
             . Your key is stored only in your browser.
@@ -176,11 +187,7 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
                 {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
-            <button
-              type="submit"
-              className="btn-primary apikey-save"
-              disabled={!apiKey.trim()}
-            >
+            <button type="submit" className="btn-primary apikey-save" disabled={!apiKey.trim()}>
               Save & Start
             </button>
           </div>
@@ -190,12 +197,7 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
       {/* Chat messages */}
       {keySubmitted && (
         <>
-          <div
-            className="chat-messages"
-            role="log"
-            aria-label="Chat messages"
-            aria-live="polite"
-          >
+          <div className="chat-messages" role="log" aria-label="Chat messages" aria-live="polite">
             {messages.length === 0 ? (
               <div className="chat-empty">
                 <Bot size={40} aria-hidden="true" />
@@ -220,7 +222,9 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
 
             {loading && (
               <div className="chat-message chat-message--ai" aria-label="AI is thinking">
-                <div className="chat-avatar" aria-hidden="true"><Bot size={16} /></div>
+                <div className="chat-avatar" aria-hidden="true">
+                  <Bot size={16} />
+                </div>
                 <div className="chat-bubble chat-bubble--loading">
                   <Loader size={16} className="spin" aria-hidden="true" />
                   <span>Thinking…</span>
@@ -265,7 +269,6 @@ export default function AiChat({ messages, onAddMessage, onClearHistory, userCon
   );
 }
 
-
 ChatMessage.propTypes = {
   message: PropTypes.shape({
     role: PropTypes.string.isRequired,
@@ -275,11 +278,13 @@ ChatMessage.propTypes = {
 };
 
 AiChat.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
-    role: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-  })).isRequired,
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      role: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
+    })
+  ).isRequired,
   onAddMessage: PropTypes.func.isRequired,
   onClearHistory: PropTypes.func.isRequired,
   userContext: PropTypes.shape({

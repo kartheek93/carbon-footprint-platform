@@ -40,7 +40,7 @@ export async function sendMessageToAssistant(
   apiKey = ''
 ) {
   const resolvedKey = apiKey || import.meta.env.VITE_MISTRAL_API_KEY || '';
-  if (!resolvedKey) throw new Error('Mistral API key is not set. Please enter your API key.');
+  if (!resolvedKey) {throw new Error('Mistral API key is not set. Please enter your API key.');}
 
   const contextBlock = Object.keys(userContext).length
     ? `\n\n[User Context: ${JSON.stringify(userContext, null, 0)}]`
@@ -60,7 +60,7 @@ export async function sendMessageToAssistant(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${resolvedKey}`,
+      Authorization: `Bearer ${resolvedKey}`,
     },
     body: JSON.stringify({
       model: 'mistral-small-latest', // Free tier model
@@ -78,7 +78,7 @@ export async function sendMessageToAssistant(
   }
 
   const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error('No response received from Mistral.');
+  if (!text) {throw new Error('No response received from Mistral.');}
 
   return text;
 }

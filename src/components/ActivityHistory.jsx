@@ -13,19 +13,32 @@ export default function ActivityHistory({ entries, onDelete }) {
   const [sortBy, setSortBy] = useState('date_desc');
 
   const filtered = useMemo(() => {
-    let list = filterCat === 'all' ? [...entries] : entries.filter((e) => e.category === filterCat);
+    const list = filterCat === 'all' ? [...entries] : entries.filter((e) => e.category === filterCat);
     switch (sortBy) {
-      case 'date_desc':     list.sort((a, b) => new Date(b.date) - new Date(a.date)); break;
-      case 'date_asc':      list.sort((a, b) => new Date(a.date) - new Date(b.date)); break;
-      case 'emission_desc': list.sort((a, b) => b.emissionKg - a.emissionKg); break;
-      case 'emission_asc':  list.sort((a, b) => a.emissionKg - b.emissionKg); break;
-      default: break;
+      case 'date_desc':
+        list.sort((a, b) => new Date(b.date) - new Date(a.date));
+        break;
+      case 'date_asc':
+        list.sort((a, b) => new Date(a.date) - new Date(b.date));
+        break;
+      case 'emission_desc':
+        list.sort((a, b) => b.emissionKg - a.emissionKg);
+        break;
+      case 'emission_asc':
+        list.sort((a, b) => a.emissionKg - b.emissionKg);
+        break;
+      default:
+        break;
     }
     return list;
   }, [entries, filterCat, sortBy]);
 
   function formatDate(iso) {
-    return new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 
   function formatActivityLabel(entry) {
@@ -42,19 +55,33 @@ export default function ActivityHistory({ entries, onDelete }) {
       <div className="history-controls" role="group" aria-label="Filter and sort options">
         <div className="filter-group">
           <Filter size={14} aria-hidden="true" />
-          <label htmlFor="filter-category" className="sr-only">Filter by category</label>
-          <select id="filter-category" value={filterCat}
-            onChange={(e) => setFilterCat(e.target.value)} className="filter-select">
+          <label htmlFor="filter-category" className="sr-only">
+            Filter by category
+          </label>
+          <select
+            id="filter-category"
+            value={filterCat}
+            onChange={(e) => setFilterCat(e.target.value)}
+            className="filter-select"
+          >
             <option value="all">All categories</option>
             {Object.entries(CATEGORIES).map(([k, v]) => (
-              <option key={k} value={k}>{v.label}</option>
+              <option key={k} value={k}>
+                {v.label}
+              </option>
             ))}
           </select>
         </div>
         <div className="filter-group">
-          <label htmlFor="sort-entries" className="sr-only">Sort entries</label>
-          <select id="sort-entries" value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)} className="filter-select">
+          <label htmlFor="sort-entries" className="sr-only">
+            Sort entries
+          </label>
+          <select
+            id="sort-entries"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="filter-select"
+          >
             <option value="date_desc">Newest first</option>
             <option value="date_asc">Oldest first</option>
             <option value="emission_desc">Highest emission</option>
@@ -75,22 +102,33 @@ export default function ActivityHistory({ entries, onDelete }) {
             const cat = CATEGORIES[entry.category];
             return (
               <li key={entry.id} className="history-item">
-                <div className="history-dot" style={{ background: cat?.color || '#94a3b8' }} aria-hidden="true" />
+                <div
+                  className="history-dot"
+                  style={{ background: cat?.color || '#94a3b8' }}
+                  aria-hidden="true"
+                />
                 <div className="history-info">
                   <div className="history-title">
-                    <span aria-hidden="true">{cat?.icon}</span>{' '}
-                    {formatActivityLabel(entry)}
+                    <span aria-hidden="true">{cat?.icon}</span> {formatActivityLabel(entry)}
                     {entry.notes && <span className="history-notes"> — {entry.notes}</span>}
                   </div>
-                  <div className="history-meta">{formatDate(entry.date)} · {cat?.label}</div>
+                  <div className="history-meta">
+                    {formatDate(entry.date)} · {cat?.label}
+                  </div>
                 </div>
-                <div className="history-emission" style={{ color: cat?.color || '#94a3b8' }}
-                  aria-label={`${formatEmission(entry.emissionKg)} CO2e`}>
+                <div
+                  className="history-emission"
+                  style={{ color: cat?.color || '#94a3b8' }}
+                  aria-label={`${formatEmission(entry.emissionKg)} CO2e`}
+                >
                   {formatEmission(entry.emissionKg)}
                 </div>
-                <button onClick={() => onDelete(entry.id)} className="btn-icon btn-icon--danger"
+                <button
+                  onClick={() => onDelete(entry.id)}
+                  className="btn-icon btn-icon--danger"
                   aria-label={`Delete ${formatActivityLabel(entry)} on ${formatDate(entry.date)}`}
-                  title="Delete entry">
+                  title="Delete entry"
+                >
                   <Trash2 size={15} />
                 </button>
               </li>
@@ -103,13 +141,15 @@ export default function ActivityHistory({ entries, onDelete }) {
 }
 
 ActivityHistory.propTypes = {
-  entries: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    activityType: PropTypes.string.isRequired,
-    emissionKg: PropTypes.number.isRequired,
-    date: PropTypes.string.isRequired,
-    notes: PropTypes.string,
-  })).isRequired,
+  entries: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      category: PropTypes.string.isRequired,
+      activityType: PropTypes.string.isRequired,
+      emissionKg: PropTypes.number.isRequired,
+      date: PropTypes.string.isRequired,
+      notes: PropTypes.string,
+    })
+  ).isRequired,
   onDelete: PropTypes.func.isRequired,
 };

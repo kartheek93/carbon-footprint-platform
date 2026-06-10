@@ -4,7 +4,11 @@
  * @module carbonCalc
  */
 
-import { EMISSION_FACTORS, GLOBAL_AVERAGE_KG_PER_YEAR, TARGET_KG_PER_YEAR } from '../types/constants.js';
+import {
+  EMISSION_FACTORS,
+  GLOBAL_AVERAGE_KG_PER_YEAR,
+  TARGET_KG_PER_YEAR,
+} from '../types/constants.js';
 
 /** Decimal precision for emission values */
 const EMISSION_PRECISION = 3;
@@ -24,8 +28,8 @@ const MIN_PERIOD_DAYS = 1;
  */
 export function calcTransportEmission(mode, distanceKm) {
   const factor = EMISSION_FACTORS.transport[mode];
-  if (factor === undefined) throw new Error(`Unknown transport mode: ${mode}`);
-  if (distanceKm < 0) throw new Error('Distance must be non-negative');
+  if (factor === undefined) {throw new Error(`Unknown transport mode: ${mode}`);}
+  if (distanceKm < 0) {throw new Error('Distance must be non-negative');}
   return parseFloat((factor * distanceKm).toFixed(EMISSION_PRECISION));
 }
 
@@ -38,8 +42,8 @@ export function calcTransportEmission(mode, distanceKm) {
  */
 export function calcFoodEmission(foodType, amountKg) {
   const factor = EMISSION_FACTORS.food[foodType];
-  if (factor === undefined) throw new Error(`Unknown food type: ${foodType}`);
-  if (amountKg < 0) throw new Error('Amount must be non-negative');
+  if (factor === undefined) {throw new Error(`Unknown food type: ${foodType}`);}
+  if (amountKg < 0) {throw new Error('Amount must be non-negative');}
   return parseFloat((factor * amountKg).toFixed(EMISSION_PRECISION));
 }
 
@@ -52,8 +56,8 @@ export function calcFoodEmission(foodType, amountKg) {
  */
 export function calcEnergyEmission(energyType, amount) {
   const factor = EMISSION_FACTORS.energy[energyType];
-  if (factor === undefined) throw new Error(`Unknown energy type: ${energyType}`);
-  if (amount < 0) throw new Error('Amount must be non-negative');
+  if (factor === undefined) {throw new Error(`Unknown energy type: ${energyType}`);}
+  if (amount < 0) {throw new Error('Amount must be non-negative');}
   return parseFloat((factor * amount).toFixed(EMISSION_PRECISION));
 }
 
@@ -66,8 +70,8 @@ export function calcEnergyEmission(energyType, amount) {
  */
 export function calcShoppingEmission(itemType, quantity) {
   const factor = EMISSION_FACTORS.shopping[itemType];
-  if (factor === undefined) throw new Error(`Unknown item type: ${itemType}`);
-  if (quantity < 0) throw new Error('Quantity must be non-negative');
+  if (factor === undefined) {throw new Error(`Unknown item type: ${itemType}`);}
+  if (quantity < 0) {throw new Error('Quantity must be non-negative');}
   return parseFloat((factor * quantity).toFixed(EMISSION_PRECISION));
 }
 
@@ -90,9 +94,7 @@ export function aggregateByCategory(entries) {
  * @returns {number} Total kg CO2e
  */
 export function calcTotalEmissions(entries) {
-  return parseFloat(
-    entries.reduce((sum, e) => sum + e.emissionKg, 0).toFixed(EMISSION_PRECISION)
-  );
+  return parseFloat(entries.reduce((sum, e) => sum + e.emissionKg, 0).toFixed(EMISSION_PRECISION));
 }
 
 /**
@@ -103,7 +105,7 @@ export function calcTotalEmissions(entries) {
  * @returns {number} Projected annual kg CO2e (0 if no entries)
  */
 export function projectAnnualEmissions(entries, startDate, endDate) {
-  if (!entries.length) return 0;
+  if (!entries.length) {return 0;}
   const daysDiff = Math.max(
     MIN_PERIOD_DAYS,
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
@@ -136,7 +138,7 @@ export function compareToBenchmarks(userAnnualKg) {
  * @returns {string} Formatted string (e.g. "2.50 tonnes" or "500.0 kg")
  */
 export function formatEmission(kg) {
-  if (kg >= 1000) return `${(kg / 1000).toFixed(2)} tonnes`;
+  if (kg >= 1000) {return `${(kg / 1000).toFixed(2)} tonnes`;}
   return `${kg.toFixed(1)} kg`;
 }
 
@@ -146,10 +148,10 @@ export function formatEmission(kg) {
  * @returns {string} Hex colour string
  */
 export function getEmissionColor(userKg) {
-  if (userKg <= TARGET_KG_PER_YEAR) return '#4ade80';         // green  — at/below target
-  if (userKg <= GLOBAL_AVERAGE_KG_PER_YEAR) return '#facc15'; // yellow — below global avg
-  if (userKg <= 10000) return '#f97316';                       // orange — high
-  return '#ef4444';                                            // red    — very high
+  if (userKg <= TARGET_KG_PER_YEAR) {return '#4ade80';} // green  — at/below target
+  if (userKg <= GLOBAL_AVERAGE_KG_PER_YEAR) {return '#facc15';} // yellow — below global avg
+  if (userKg <= 10000) {return '#f97316';} // orange — high
+  return '#ef4444'; // red    — very high
 }
 
 /**
@@ -160,7 +162,7 @@ export function getEmissionColor(userKg) {
 export function groupByDay(entries) {
   return entries.reduce((acc, entry) => {
     const day = entry.date.slice(0, 10);
-    if (!acc[day]) acc[day] = [];
+    if (!acc[day]) {acc[day] = [];}
     acc[day].push(entry);
     return acc;
   }, {});
@@ -183,10 +185,10 @@ export function getPreviousDay(dateStr) {
  * @returns {number} Current streak length (0 if no recent entries)
  */
 export function getCurrentStreak(entries) {
-  if (!entries.length) return 0;
+  if (!entries.length) {return 0;}
   const days = Object.keys(groupByDay(entries)).sort().reverse();
   const today = new Date().toISOString().slice(0, 10);
-  if (days[0] !== today && days[0] !== getPreviousDay(today)) return 0;
+  if (days[0] !== today && days[0] !== getPreviousDay(today)) {return 0;}
 
   let streak = 1;
   for (let i = 1; i < days.length; i++) {
@@ -205,7 +207,7 @@ export function getCurrentStreak(entries) {
  * @returns {string} Sanitized string capped at 500 characters
  */
 export function sanitizeText(input) {
-  if (typeof input !== 'string') return '';
+  if (typeof input !== 'string') {return '';}
   return input
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -222,11 +224,11 @@ export function sanitizeText(input) {
  */
 export function validateEntry(entry) {
   const errors = [];
-  if (!entry.category) errors.push('Category is required');
-  if (!entry.activityType) errors.push('Activity type is required');
+  if (!entry.category) {errors.push('Category is required');}
+  if (!entry.activityType) {errors.push('Activity type is required');}
   if (typeof entry.emissionKg !== 'number' || isNaN(entry.emissionKg) || entry.emissionKg < 0) {
     errors.push('Emission must be a non-negative number');
   }
-  if (!entry.date) errors.push('Date is required');
+  if (!entry.date) {errors.push('Date is required');}
   return { valid: errors.length === 0, errors };
 }
