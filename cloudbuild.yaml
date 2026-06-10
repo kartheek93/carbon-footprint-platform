@@ -1,0 +1,13 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_MISTRAL_API_KEY=$_MISTRAL_API_KEY'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/prompt-wars-3/ecotrace/ecotrace-app'
+      - '.'
+images:
+  - 'us-central1-docker.pkg.dev/prompt-wars-3/ecotrace/ecotrace-app'
+substitutions:
+  _MISTRAL_API_KEY: 'your_mistral_key_here'
