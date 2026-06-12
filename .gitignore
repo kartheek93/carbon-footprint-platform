@@ -7,3 +7,8 @@ dist/
 *.log
 .vite/
 coverage/
+
+# IDE / Editor configurations
+.qodo/
+.vscode/
+.idea/
